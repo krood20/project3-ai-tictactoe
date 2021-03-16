@@ -4,6 +4,17 @@ import http.client
 import mimetypes
 from codecs import encode
 
+# TEAM INFO
+#Main Team: TeamTacToe
+#{"code":"OK","teamId":1260}
+teamId = "1260"
+
+teamId1 = "1260"
+teamId2 = "1259"
+
+# Test team: AlphaTicTacToe
+# {"code":"OK","teamId":1259}
+
 
 ## GET ##
 def get_myTeams(conn, payload, headers):
@@ -38,7 +49,7 @@ def get_board_map(conn, payload, headers, gameId):
 
 ## POST ##
 def general_post(conn, payload, headers, dataList):
-     body = b'\r\n'.join(dataList)
+    body = b'\r\n'.join(dataList)
     payload = body
     headers = {
     'x-api-key': '9398bf5f4533fbabb0af',
@@ -167,6 +178,8 @@ def make_move(conn, payload, headers, teamId, move, gameId):
 
     general_post(conn, payload, headers, dataList)
 
+
+#connect to api
 conn = http.client.HTTPSConnection("www.notexponential.com")
 payload = ''
 headers = {
@@ -177,19 +190,16 @@ headers = {
 #getting teams for current api user
 get_myTeams(conn, payload, headers)
 
-name = "AlphaTicTacToe"
+# name = "AlphaTicTacToe"
 # create_team(conn, payload, headers, name)
 
 entry_type = "member"
-teamId = "1012" #TODO: How do we get this? (except on creation)
 userId = "1042"
 # add_member_to_team(conn, payload, headers, teamId, userId)
 
 get_team_members(conn, payload, headers, teamId)
 
 
-teamId1 = "1012"
-teamId2 = "1013"
 gameType = "TTT"
 # create_game(conn, payload, headers, teamId1, teamId2, gameType)
 
@@ -205,6 +215,29 @@ headers = {
   'userId': '1042'
 }
 gameId = "1310"
-get_moves(conn, payload, headers, gameId, count)
+get_moves(conn, payload, headers, gameId, "30")
 get_board_string(conn, payload, headers, gameId)
 get_board_map(conn, payload, headers, gameId)
+
+
+
+#Example Board map
+#{"output":"{\"2,2\":\"O\",\"3,3\":\"X\",\"1,2\":\"O\",\"3,2\":\"X\",\"0,2\":\"O\"}","target":3,"code":"OK"}
+
+#Example board string
+# {"output":"--O-\n--O-\n--O-\n--XX\n","target":3,"code":"OK"}
+
+#Example moves
+# {"moves":[{"moveId":"52412","gameId":"1310","teamId":"1204","move":"10,4","symbol":"X","moveX":"10","moveY":"4"},
+#           {"moveId":"52378","gameId":"1310","teamId":"1229","move":"6,10","symbol":"O","moveX":"6","moveY":"10"},
+#           {"moveId":"52372","gameId":"1310","teamId":"1204","move":"5,9","symbol":"X","moveX":"5","moveY":"9"},
+#           {"moveId":"52342","gameId":"1310","teamId":"1229","move":"7,9","symbol":"O","moveX":"7","moveY":"9"},
+#           {"moveId":"52336","gameId":"1310","teamId":"1204","move":"6,8","symbol":"X","moveX":"6","moveY":"8"},
+#           {"moveId":"52324","gameId":"1310","teamId":"1229","move":"10,6","symbol":"O","moveX":"10","moveY":"6"},
+#           {"moveId":"52323","gameId":"1310","teamId":"1204","move":"9,5","symbol":"X","moveX":"9","moveY":"5"},
+#           {"moveId":"52321","gameId":"1310","teamId":"1229","move":"9,7","symbol":"O","moveX":"9","moveY":"7"},
+#           {"moveId":"52320","gameId":"1310","teamId":"1204","move":"8,6","symbol":"X","moveX":"8","moveY":"6"},
+#           {"moveId":"52319","gameId":"1310","teamId":"1229","move":"8,8","symbol":"O","moveX":"8","moveY":"8"},
+#           {"moveId":"52318","gameId":"1310","teamId":"1204","move":"7,7","symbol":"X","moveX":"7","moveY":"7"},
+#           {"moveId":"52316","gameId":"1310","teamId":"1229","move":"6,6","symbol":"O","moveX":"6","moveY":"6"}
+#          ],"code":"OK"}
