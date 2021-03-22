@@ -1,5 +1,5 @@
 # Python3 program to find the next optimal move for a player 
-player, opponent = 'X', 'O'
+# player, opponent = 'X', 'O'
  
 # This function returns true if there are moves 
 # remaining on the board. It returns false if 
@@ -14,7 +14,7 @@ def isMovesLeft(board) :
  
 # This is the evaluation function as discussed 
 # in the previous article ( http://goo.gl/sJgv68 ) 
-def evaluate(b) : 
+def evaluate(b, player, opponent) : 
    
     # Checking for Rows for X or O victory. 
     for row in range(3) :     
@@ -55,8 +55,8 @@ def evaluate(b) :
 # This is the minimax function. It considers all 
 # the possible ways the game can go and returns 
 # the value of the board 
-def minimax(board, depth, isMax) : 
-    score = evaluate(board)
+def minimax(board, depth, isMax, player, opponent) : 
+    score = evaluate(board, player, opponent)
  
     # If Maximizer has won the game return his/her 
     # evaluated score 
@@ -91,7 +91,7 @@ def minimax(board, depth, isMax) :
                     # the maximum value 
                     best = max( best, minimax(board,
                                               depth + 1,
-                                              not isMax) )
+                                              not isMax, player, opponent) )
  
                     # Undo the move 
                     board[i][j] = '_'
@@ -113,15 +113,15 @@ def minimax(board, depth, isMax) :
  
                     # Call minimax recursively and choose 
                     # the minimum value 
-                    best = min(best, minimax(board, depth + 1, not isMax))
+                    best = min(best, minimax(board, depth + 1, not isMax, player, opponent))
  
                     # Undo the move 
                     board[i][j] = '_'
         return best
  
 # This will return the best possible move for the player 
-def findBestMove(board) : 
-    bestVal = -1000
+def findBestMove(board, player, opponent) : 
+    bestVal = -10000
     bestMove = (-1, -1) 
  
     # Traverse all cells, evaluate minimax function for 
@@ -138,7 +138,7 @@ def findBestMove(board) :
  
                 # compute evaluation function for this 
                 # move. 
-                moveVal = minimax(board, 0, False) 
+                moveVal = minimax(board, 0, False, player, opponent) 
  
                 # Undo the move 
                 board[i][j] = '_'
