@@ -4,6 +4,10 @@ import http.client
 import mimetypes
 from codecs import encode
 
+import naveedCode.naveed_ai as naveed_ai
+
+import json
+
 # TEAM INFO
 #Main Team: TeamTacToe
 #{"code":"OK","teamId":1260}
@@ -39,7 +43,7 @@ def get_board_string(conn, payload, headers, gameId):
     conn.request("GET", "/aip2pgaming/api/index.php?type=boardString&gameId=" + gameId, payload, headers)
     res = conn.getresponse()
     data = res.read()
-    print(data.decode("utf-8"))
+    return data.decode("utf-8")
 
 def get_board_map(conn, payload, headers, gameId):
     conn.request("GET", "/aip2pgaming/api/index.php?type=boardMap&gameId=" + gameId, payload, headers)
@@ -188,39 +192,64 @@ headers = {
 }
 
 #getting teams for current api user
-get_myTeams(conn, payload, headers)
+# get_myTeams(conn, payload, headers)
 
 # name = "AlphaTicTacToe"
 # create_team(conn, payload, headers, name)
 
-entry_type = "member"
-userId = "1042"
+# entry_type = "member"
+# userId = "1042"
 # add_member_to_team(conn, payload, headers, teamId, userId)
 
-get_team_members(conn, payload, headers, teamId)
+# get_team_members(conn, payload, headers, teamId)
 
 
-gameType = "TTT"
+# gameType = "TTT"
 # create_game(conn, payload, headers, teamId1, teamId2, gameType)
 
 
-move="4,4"
-gameid = "1006"
+# move="4,4"
+# gameid = "1006"
 # make_move(conn, payload, headers, teamId, move, gameId)
 
 
 payload = ''
 headers = {
-  'x-api-key': '9398bf5f4533fbabb0af',
-  'userId': '1042'
+  'x-api-key': '49d038fb3c2011271e31',
+  'userId': '1071'
 }
-gameId = "1310"
-get_moves(conn, payload, headers, gameId, "30")
-get_board_string(conn, payload, headers, gameId)
-get_board_map(conn, payload, headers, gameId)
+gameId = "1751"
+#get_moves(conn, payload, headers, gameId, "30")
+boardString =  get_board_string(conn, payload, headers, gameId)
+print(boardString)
+#get_board_map(conn, payload, headers, gameId)
+boardString =  json.loads(boardString)
+boardString = boardString["output"]
 
+board = naveed_ai.boardStringTo2DArray(boardString)
+for row in board:
+    print(row)
 
-
+nextMove = "X"
+i = 0
+playedMoves= []
+while i < 144 :
+    move = naveed_ai.getNextBestMove(board, nextMove)
+    x = move[0]
+    y = move[1]
+    board[x][y] = nextMove
+    win = naveed_ai.checkForWins(board, nextMove)
+    if(win > 0):
+        print(move, nextMove)
+        break
+    i = i + 1
+    if nextMove == 'X':
+        nextMove = 'Y'
+    else:
+        nextMove = 'X'
+for row in board:
+    print(row)
+    # input("Next")
 #Example Board map
 #{"output":"{\"2,2\":\"O\",\"3,3\":\"X\",\"1,2\":\"O\",\"3,2\":\"X\",\"0,2\":\"O\"}","target":3,"code":"OK"}
 

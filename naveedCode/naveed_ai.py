@@ -1,5 +1,6 @@
 import json
 from copy import copy, deepcopy
+import math
 # AI functions
 
 
@@ -32,7 +33,7 @@ def checkHorizontal(board, move, target=6):
                 if(currentRun > maxRun):
                     maxRun = currentRun
                 if currentRun == target:
-                    print('horizontal win', i, j)
+                    #print('horizontal win', i, j)
                     return 1, maxRun
             else:
                 currentRun = 0
@@ -43,14 +44,14 @@ def checkVertical(board, move, target=6):
     maxRun = 0
     for i in range(len(board)):
         currentRun = 0
-       
+
         for j in range(len(board)):
             if(board[j][i] == move):
                 currentRun = currentRun + 1
                 if(currentRun > maxRun):
                     maxRun = currentRun
                 if currentRun == target:
-                    print('vert win', i, j)
+                    #print('vert win', i, j)
                     return 1, maxRun
             else:
                 currentRun = 0
@@ -73,7 +74,6 @@ def checkDiagonal(board, move, target=6):
                 if(currentRun > maxRun):
                     maxRun = currentRun
                 if currentRun == target:
-                    print('found win')
                     wins = wins + 1
                     break
             else:
@@ -90,7 +90,6 @@ def checkDiagonal(board, move, target=6):
                 if(currentRun > maxRun):
                     maxRun = currentRun
                 if currentRun == target:
-                    print('found win')
                     wins = wins + 1
                     break
             else:
@@ -108,7 +107,6 @@ def checkDiagonal(board, move, target=6):
                 if(currentRun > maxRun):
                     maxRun = currentRun
                 if currentRun == target:
-                    print('found win')
                     wins = wins + 1
                     break
             else:
@@ -125,7 +123,6 @@ def checkDiagonal(board, move, target=6):
                 if(currentRun > maxRun):
                     maxRun = currentRun
                 if currentRun == target:
-                    print('found win')
                     wins = wins + 1
                     break
             else:
@@ -136,78 +133,120 @@ def checkDiagonal(board, move, target=6):
     return wins, maxRun
 
 
+def checkForWins(board, move, target=6):
+    x, y = checkHorizontal(board, move, target)
+    x1, y1 = checkVertical(board, move, target)
+    x2, y2 = checkDiagonal(board, move, target)
+    return max([x, x1, x2])
+
+
 def evalauteState(board, move, target=6):
 
-    x,y = checkHorizontal(board, move, target) 
-    x1,y1 = checkVertical(board, move, target) 
-    x2,y2 =  checkDiagonal(board, move, target)
-    
-    
-    tot_y = (y if y>1 else 0 ) + (y1 if y1>1 else 0 )+ (y2 if y2>1 else 0 )
-    return  x+x1+x2, tot_y 
+    # finding wins
+    x, y = checkHorizontal(board, move, target)
+    x1, y1 = checkVertical(board, move, target)
+    x2, y2 = checkDiagonal(board, move, target)
+
+    if(move == 'X'):
+        opMove = 'Y'
+    else:
+        opMove = 'X'
+    # findingLoses
+    a, b = checkHorizontal(board, opMove, target)
+    a1, b1 = checkVertical(board, opMove, target)
+    a2, b2 = checkDiagonal(board, opMove, target)
+
+    return (x + x1 + x2) - (a + a1 + a2), max([b, b1, b2])
+
+
+def getBestScoringMove(moves):
+    moves  = filter(lambda x: x is not None , moves) 
+    bestMove = [0, 0, 0, 0, 0]
+    for move in moves:
+        if move[0] > bestMove[0]:
+            bestMove = move
+        elif move[0] == bestMove[0]:
+            if move[1] > bestMove[1]:
+                bestMove = move
+    return bestMove
+
+
+def getWorstScoringMove(moves):
+    moves  = filter(lambda x: x is not None , moves) 
+    bestMove = [math.inf, math.inf, math.inf, 0, 0]
+    for move in moves:
+        if move[0] < bestMove[0]:
+            bestMove = move
+        elif move[0] == bestMove[0]:
+            if move[1] < bestMove[1]:
+                bestMove = move
+    return bestMove
+
 
 def getNextBestMove(Board, move):
-    takenSqaures=[]
-    for i in range(len(Board)):
-        for j in range(len(Board[i])) :
-            if(Board[i][j] != '-'):
-                takenSqaures.append([i,j])
-    moves =[]
-    for square in takenSqaures: 
-        i = square[0]
-        j = square[1]
-        moves.append(  list(miniMax(i,j,True, 0,0,Board,move)))
-    return moves
 
-def getEmptyAdjacentSqaures(i,j,Board):
+    potentialMoveSqaures = []
+    for i in range(len(Board)):
+        for j in range(len(Board[i])):
+            if(Board[i][j] != '-'):
+                potentialMoveSqaures.append([i, j])
+    if len(potentialMoveSqaures) > 0:
+        moves = []
+        for square in potentialMoveSqaures:
+            i = square[0]
+            j = square[1]
+            moves.append(miniMax(i, j, True, 0, 2, Board, move, move))
+
+        bestMove = getBestScoringMove(moves)
+        return [bestMove[3], bestMove[4]]
+    else:
+        return [math.trunc(len(Board) / 2), math.trunc(len(Board) / 2)]
+
+
+def getEmptyAdjacentSqaures(i, j, Board):
     emptySpaces = []
 
-    for x in [i-1, i+1]:        
+    for x in [i-1, i, i+1]:
         if(x < len(Board) and x >= 0):
-            for y in [j-1, j+1]:
-                if(y < len(Board) and y >= 0):
+            for y in [j-1, j, j+1]:
+                if(y < len(Board) and y >= 0 and (x != i or y != j)):
                     if Board[x][y] == '-':
-                        emptySpaces.append([x,y])
+                        emptySpaces.append([x, y])
     return emptySpaces
 
 
-def miniMaxHelper(i,j,isMax, currentDepth ,maxDepth,Board, move):
-    
+def miniMaxHelper(i, j, isMax, currentDepth, maxDepth, Board, move, originalMove):
     board = deepcopy(Board)
     board[i][j] = move
-    
     if move == 'X':
         nextMove = 'Y'
     else:
         nextMove = 'X'
-
-    if(currentDepth < maxDepth) :
-        wins1, maxRun1  = evalauteState(board, move) 
-        if(wins1 > 0 ) :
-            return wins1 , maxRun1 , currentDepth ,i,j
-        wins2, maxRun2, depth   = miniMax(i,j, not isMax , currentDepth + 1 ,maxDepth,board, nextMove)
-        return wins1 + wins2, maxRun1 + maxRun2 , currentDepth  , i, j
+    if(currentDepth < maxDepth):
+        return miniMax(i, j, not isMax, currentDepth + 1, maxDepth, board, nextMove , originalMove)
     else:
-        wins1, maxRun1 = evalauteState(board, move)
-        return  wins1, maxRun1, currentDepth , i, j
-def miniMax(i,j,isMax, currentDepth ,maxDepth,Board, move):
-    try:
-        emptySpaces = getEmptyAdjacentSqaures(i,j, Board)
-        if len(emptySpaces) != 0:
-            if isMax :
-                values = []
-                for space in emptySpaces :
-                    values.append(miniMaxHelper(space[0],space[1], isMax, currentDepth ,maxDepth,Board, move))
-                maxValue =  max( values ) 
-                return maxValue
-            else:
-                values = []
-                for space in emptySpaces :
-                    values.append(miniMaxHelper(space[0],space[1], isMax, currentDepth ,maxDepth,Board, move))
-                minValue =  min( values ) 
-                return minValue
+        wins1, maxRun1 = evalauteState(board, originalMove)
+        return [wins1, maxRun1, currentDepth, i, j]
+
+
+def miniMax(i, j, isMax, currentDepth, maxDepth, Board, move, originalMove):
+    emptySpaces = getEmptyAdjacentSqaures(i, j, Board)
+    if len(emptySpaces) != 0:
+        if isMax:
+            values = []
+            for space in emptySpaces:
+                values.append(miniMaxHelper(space[0], space[1], isMax, currentDepth, maxDepth, Board, move, originalMove))
+                maxValue = getBestScoringMove(values)
+            return maxValue
         else:
-            return 0,0
-            
-    except Exception as e:
-        print(e, emptySpaces)
+            values = []
+            for space in emptySpaces:
+                values.append(miniMaxHelper(space[0], space[1], isMax, currentDepth, maxDepth, Board, move, originalMove))
+            minValue = getWorstScoringMove(values)
+            return minValue
+    else:
+        if(currentDepth > 0):
+            wins1, maxRun1 = evalauteState(Board, originalMove)
+            return [wins1, maxRun1, currentDepth, i, j]
+        else:
+           return [-math.inf, -math.inf, -math.inf, 0, 0]
