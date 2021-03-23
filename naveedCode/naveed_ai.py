@@ -1,6 +1,8 @@
 import json
 from copy import copy, deepcopy
 import math
+import http.client
+import api_interaction as API
 # AI functions
 
 
@@ -250,3 +252,43 @@ def miniMax(i, j, isMax, currentDepth, maxDepth, Board, move, originalMove):
             return [wins1, maxRun1, currentDepth, i, j]
         else:
            return [-math.inf, -math.inf, -math.inf, 0, 0]
+
+
+conn = http.client.HTTPSConnection("www.notexponential.com")
+payload = ''
+headers = {
+  'x-api-key': '49d038fb3c2011271e31',
+  'userId': '1071'
+}
+gameId = "1751"
+#get_moves(conn, payload, headers, gameId, "30")
+boardString =  API.get_board_string(conn, payload, headers, gameId)
+print(boardString)
+#get_board_map(conn, payload, headers, gameId)
+boardString =  json.loads(boardString)
+boardString = boardString["output"]
+
+board = boardStringTo2DArray(boardString)
+for row in board:
+    print(row)
+
+nextMove = "X"
+i = 0
+playedMoves= []
+while i < 144 :
+    move = getNextBestMove(board, nextMove)
+    x = move[0]
+    y = move[1]
+    board[x][y] = nextMove
+    win = checkForWins(board, nextMove)
+    if(win > 0):
+        print(move, nextMove)
+        break
+    i = i + 1
+    if nextMove == 'X':
+        nextMove = 'Y'
+    else:
+        nextMove = 'X'
+for row in board:
+    print(row)
+    # input("Next")

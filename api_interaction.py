@@ -1,10 +1,8 @@
-import http.client
 
 import http.client
 import mimetypes
 from codecs import encode
-
-import naveedCode.naveed_ai as naveed_ai
+import time
 
 import json
 
@@ -19,6 +17,8 @@ teamId2 = "1259"
 # Test team: AlphaTicTacToe
 # {"code":"OK","teamId":1259}
 
+boundary = 'wL36Yn8afVp8Ag7AmP8qZ0SA4n1v9T'
+
 
 ## GET ##
 def get_myTeams(conn, payload, headers):
@@ -26,23 +26,27 @@ def get_myTeams(conn, payload, headers):
     res = conn.getresponse()
     data = res.read()
     print(data.decode("utf-8"))
+    return data.decode("utf-8")
 
 def get_team_members(conn, payload, headers, team_id):
     conn.request("GET", "/aip2pgaming/api/index.php?type=team&teamId=" + team_id, payload, headers)
     res = conn.getresponse()
     data = res.read()
     print(data.decode("utf-8"))
+    return data.decode("utf-8")
 
 def get_moves(conn, payload, headers, gameId, count):
     conn.request("GET", "/aip2pgaming/api/index.php?type=moves&gameId=" + gameId + "&count=" + count, payload, headers)
     res = conn.getresponse()
     data = res.read()
     print(data.decode("utf-8"))
+    return data.decode("utf-8")
 
 def get_board_string(conn, payload, headers, gameId):
     conn.request("GET", "/aip2pgaming/api/index.php?type=boardString&gameId=" + gameId, payload, headers)
     res = conn.getresponse()
     data = res.read()
+    print(data.decode("utf-8"))
     return data.decode("utf-8")
 
 def get_board_map(conn, payload, headers, gameId):
@@ -50,21 +54,23 @@ def get_board_map(conn, payload, headers, gameId):
     res = conn.getresponse()
     data = res.read()
     print(data.decode("utf-8"))
+    return data.decode("utf-8")
 
 ## POST ##
 def general_post(conn, payload, headers, dataList):
     body = b'\r\n'.join(dataList)
     payload = body
     headers = {
-    'x-api-key': '9398bf5f4533fbabb0af',
-    'userId': '1042',
-    'Content-type': 'multipart/form-data; boundary={}'.format(boundary)
+        'x-api-key': '9398bf5f4533fbabb0af',
+        'userId': '1042',
+        'Content-type': 'multipart/form-data; boundary={}'.format(boundary)
     }
 
     conn.request("POST", "/aip2pgaming/api/index.php", payload, headers)
     res = conn.getresponse()
     data = res.read()
     print(data.decode("utf-8"))
+    return data.decode("utf-8")
 
 def create_team(conn, payload, headers, team_name):
     # conn.request("POST", "/aip2pgaming/api/index.php?name=" + team_name + "&type=team", payload, headers)
@@ -182,17 +188,32 @@ def make_move(conn, payload, headers, teamId, move, gameId):
 
     general_post(conn, payload, headers, dataList)
 
+def try_move(conn, payload, headers, teamId, gameId):
+    move="4,4"
 
-#connect to api
-conn = http.client.HTTPSConnection("www.notexponential.com")
-payload = ''
-headers = {
-  'x-api-key': '9398bf5f4533fbabb0af',
-  'userId': '1042'
-}
+    moves = get_moves(conn, payload, headers, gameId, "30")
+    board_string = get_board_string(conn, payload, headers, gameId)
+    board_map = get_board_map(conn, payload, headers, gameId)
 
+    #parsing the board
+    board_by_rows = board_string.split("\"")[3].split("\\n")[:-1]
+    print(board_by_rows)
+
+    current_board = []
+    for row in board_by_rows:
+        row = row.replace('-', '_')
+        current_board.append([char for char in row])
+
+    for row in current_board:
+        print(row)
+
+    make_move(conn, payload, headers, teamId, move, gameId)
+
+
+#NOT USED FUNCTIONS
 #getting teams for current api user
-# get_myTeams(conn, payload, headers)
+# teams = get_myTeams(conn, payload, headers)
+# print(teams)
 
 # name = "AlphaTicTacToe"
 # create_team(conn, payload, headers, name)
@@ -201,60 +222,17 @@ headers = {
 # userId = "1042"
 # add_member_to_team(conn, payload, headers, teamId, userId)
 
-# get_team_members(conn, payload, headers, teamId)
-
+# team_members = get_team_members(conn, payload, headers, teamId)
+# print(team_members)
 
 # gameType = "TTT"
 # create_game(conn, payload, headers, teamId1, teamId2, gameType)
 
-
-# move="4,4"
-# gameid = "1006"
-# make_move(conn, payload, headers, teamId, move, gameId)
-
-
-payload = ''
-headers = {
-  'x-api-key': '49d038fb3c2011271e31',
-  'userId': '1071'
-}
-gameId = "1751"
-#get_moves(conn, payload, headers, gameId, "30")
-boardString =  get_board_string(conn, payload, headers, gameId)
-print(boardString)
-#get_board_map(conn, payload, headers, gameId)
-boardString =  json.loads(boardString)
-boardString = boardString["output"]
-
-board = naveed_ai.boardStringTo2DArray(boardString)
-for row in board:
-    print(row)
-
-nextMove = "X"
-i = 0
-playedMoves= []
-while i < 144 :
-    move = naveed_ai.getNextBestMove(board, nextMove)
-    x = move[0]
-    y = move[1]
-    board[x][y] = nextMove
-    win = naveed_ai.checkForWins(board, nextMove)
-    if(win > 0):
-        print(move, nextMove)
-        break
-    i = i + 1
-    if nextMove == 'X':
-        nextMove = 'Y'
-    else:
-        nextMove = 'X'
-for row in board:
-    print(row)
-    # input("Next")
 #Example Board map
 #{"output":"{\"2,2\":\"O\",\"3,3\":\"X\",\"1,2\":\"O\",\"3,2\":\"X\",\"0,2\":\"O\"}","target":3,"code":"OK"}
 
 #Example board string
-# {"output":"--O-\n--O-\n--O-\n--XX\n","target":3,"code":"OK"}
+# "{\"output\":\"--O-\n--O-\n--O-\n--XX\n\",\"target\":3,\"code\":\"OK\"}"
 
 #Example moves
 # {"moves":[{"moveId":"52412","gameId":"1310","teamId":"1204","move":"10,4","symbol":"X","moveX":"10","moveY":"4"},
@@ -270,3 +248,20 @@ for row in board:
 #           {"moveId":"52318","gameId":"1310","teamId":"1204","move":"7,7","symbol":"X","moveX":"7","moveY":"7"},
 #           {"moveId":"52316","gameId":"1310","teamId":"1229","move":"6,6","symbol":"O","moveX":"6","moveY":"6"}
 #          ],"code":"OK"}
+
+def run():
+    #connect to api
+    conn = http.client.HTTPSConnection("www.notexponential.com")
+    payload = ''
+    headers = {
+        'x-api-key': '9398bf5f4533fbabb0af',
+        'userId': '1042'
+    }
+
+    gameId = "1310"
+    #RUN CODE#
+    while True:
+        try_move(conn, payload, headers, teamId, gameId)
+        time.sleep(30)
+
+run()
