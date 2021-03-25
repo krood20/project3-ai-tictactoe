@@ -3,6 +3,7 @@ from copy import copy, deepcopy
 import math
 import http.client
 import api_interaction as API
+import time
 # AI functions
 
 
@@ -150,7 +151,7 @@ def evalauteState(board, move, target=6):
     x2, y2 = checkDiagonal(board, move, target)
 
     if(move == 'X'):
-        opMove = 'Y'
+        opMove = 'O'
     else:
         opMove = 'X'
     # findingLoses
@@ -221,7 +222,7 @@ def miniMaxHelper(i, j, isMax, currentDepth, maxDepth, Board, move, originalMove
     board = deepcopy(Board)
     board[i][j] = move
     if move == 'X':
-        nextMove = 'Y'
+        nextMove = 'O'
     else:
         nextMove = 'X'
     if(currentDepth < maxDepth):
@@ -266,18 +267,36 @@ gameId = "2127"
 
 
 API.get_moves(conn, payload, headers, gameId,'1')
-lastMove = [1,1]
+lastMove = ['6','6']
+
+moves = API.get_moves(conn, payload, headers, gameId,'1')
+moves=json.loads(moves)
+x = moves['moves'][0]['moveX']
+y = moves['moves'][0]['moveY']
+symbol = moves['moves'][0]['symbol']
+timeId = '1260'
+
 while True :
-
+    #getting moves'
+    time.sleep(.5)
     moves = API.get_moves(conn, payload, headers, gameId,'1')
-
+    moves=json.loads(moves)
+    x = moves['moves'][0]['moveX']
+    y = moves['moves'][0]['moveY']
+    symbol = moves['moves'][0]['symbol']
+    if symbol == 'X':
+        move = 'O'
+    else:
+        move = 'X'
     boardString =  API.get_board_string(conn, payload, headers, gameId)
     boardString =  json.loads(boardString)
     boardString = boardString["output"]
     board = boardStringTo2DArray(boardString)
-    move = getNextBestMove(board, 'X')
+    for row in board:
+        print(row)
+    move = getNextBestMove(board, move)
     move = str(move[0]) + ',' + str(move[1])
-    API.make_move(conn, payload, headers,'1260', move, gameId)
+    API.make_move(conn, payload, headers,timeId, move, gameId)
 
 
     
