@@ -142,7 +142,7 @@ def create_game(conn, payload, headers, teamId1, teamId2, gameType):
     dataList.append(encode(teamId1))
     dataList.append(encode('--' + boundary))
 
-    dataList.append(encode('Content-Disposition: form-data; name=teamid2;'))
+    dataList.append(encode('Content-Disposition: form-data; name=teamId2;'))
     dataList.append(encode('Content-Type: {}'.format('text/plain')))
     dataList.append(encode(''))
     dataList.append(encode(teamId2))
@@ -155,7 +155,7 @@ def create_game(conn, payload, headers, teamId1, teamId2, gameType):
     dataList.append(encode('--'+boundary+'--'))
     dataList.append(encode(''))
 
-    general_post(conn, payload, headers, dataList)
+    return general_post(conn, payload, headers, dataList)
 
 def make_move(conn, payload, headers, teamId, move, gameId):
     dataList = []
@@ -264,4 +264,27 @@ def run():
         try_move(conn, payload, headers, teamId, gameId)
         time.sleep(30)
 
-run()
+#run()
+
+
+conn = http.client.HTTPSConnection("www.notexponential.com")
+payload = ''
+headers = {
+    'x-api-key': '49d038fb3c2011271e31',
+    'userId': '1071'
+}
+gameId = "1310"
+
+
+
+
+# teams = get_myTeams(conn, payload, headers)
+# print(teams)
+
+gameType = 'TTT'
+game = create_game(conn, payload, headers, '1260', '1259', gameType)
+print(game)
+
+
+# board = get_board_string(conn, payload, headers, '2127')
+# print(board)

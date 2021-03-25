@@ -260,7 +260,7 @@ headers = {
   'x-api-key': '49d038fb3c2011271e31',
   'userId': '1071'
 }
-gameId = "1751"
+gameId = "2127"
 #get_moves(conn, payload, headers, gameId, "30")
 boardString =  API.get_board_string(conn, payload, headers, gameId)
 print(boardString)
@@ -269,26 +269,11 @@ boardString =  json.loads(boardString)
 boardString = boardString["output"]
 
 board = boardStringTo2DArray(boardString)
-for row in board:
-    print(row)
 
-nextMove = "X"
-i = 0
-playedMoves= []
-while i < 144 :
-    move = getNextBestMove(board, nextMove)
-    x = move[0]
-    y = move[1]
-    board[x][y] = nextMove
-    win = checkForWins(board, nextMove)
-    if(win > 0):
-        print(move, nextMove)
-        break
-    i = i + 1
-    if nextMove == 'X':
-        nextMove = 'Y'
-    else:
-        nextMove = 'X'
-for row in board:
-    print(row)
+move = getNextBestMove(board, 'X')
+move = str(move[0]) + ',' + str(move[1])
+API.make_move(conn, payload, headers,'1260', move, gameId)
+boardString =  API.get_board_string(conn, payload, headers, gameId)
+print(boardString)
+API.get_moves(conn, payload, headers, gameId,'1')
     # input("Next")
