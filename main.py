@@ -8,6 +8,7 @@ import naveed_ai as AI
 
 
 
+
 conn = http.client.HTTPSConnection("www.notexponential.com")
 payload = ''
 headers = {
@@ -33,6 +34,7 @@ while True :
         move = 'O'
     else:
         move = 'X'
+    ## put call to ai logic
     boardString =  API.get_board_string(conn, payload, headers, gameId)
 
     boardString =  json.loads(boardString)
