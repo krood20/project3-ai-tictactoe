@@ -281,9 +281,9 @@ gameId = "1310"
 # teams = get_myTeams(conn, payload, headers)
 # print(teams)
 
-gameType = 'TTT'
-game = create_game(conn, payload, headers, '1260', '1259', gameType)
-print(game)
+# gameType = 'TTT'
+# game = create_game(conn, payload, headers, '1260', '1259', gameType)
+# print(game)
 
 
 # board = get_board_string(conn, payload, headers, '2127')
