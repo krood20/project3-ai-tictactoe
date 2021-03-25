@@ -262,18 +262,22 @@ headers = {
 }
 gameId = "2127"
 #get_moves(conn, payload, headers, gameId, "30")
-boardString =  API.get_board_string(conn, payload, headers, gameId)
-print(boardString)
-#get_board_map(conn, payload, headers, gameId)
-boardString =  json.loads(boardString)
-boardString = boardString["output"]
 
-board = boardStringTo2DArray(boardString)
 
-move = getNextBestMove(board, 'X')
-move = str(move[0]) + ',' + str(move[1])
-API.make_move(conn, payload, headers,'1260', move, gameId)
-boardString =  API.get_board_string(conn, payload, headers, gameId)
-print(boardString)
+
 API.get_moves(conn, payload, headers, gameId,'1')
-    # input("Next")
+lastMove = [1,1]
+while True :
+
+    moves = API.get_moves(conn, payload, headers, gameId,'1')
+
+    boardString =  API.get_board_string(conn, payload, headers, gameId)
+    boardString =  json.loads(boardString)
+    boardString = boardString["output"]
+    board = boardStringTo2DArray(boardString)
+    move = getNextBestMove(board, 'X')
+    move = str(move[0]) + ',' + str(move[1])
+    API.make_move(conn, payload, headers,'1260', move, gameId)
+
+
+    
