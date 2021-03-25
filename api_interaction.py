@@ -25,35 +25,35 @@ def get_myTeams(conn, payload, headers):
     conn.request("GET", "/aip2pgaming/api/index.php?type=myTeams", payload, headers)
     res = conn.getresponse()
     data = res.read()
-    print(data.decode("utf-8"))
+    # print(data.decode("utf-8"))
     return data.decode("utf-8")
 
 def get_team_members(conn, payload, headers, team_id):
     conn.request("GET", "/aip2pgaming/api/index.php?type=team&teamId=" + team_id, payload, headers)
     res = conn.getresponse()
     data = res.read()
-    print(data.decode("utf-8"))
+    # print(data.decode("utf-8"))
     return data.decode("utf-8")
 
 def get_moves(conn, payload, headers, gameId, count):
     conn.request("GET", "/aip2pgaming/api/index.php?type=moves&gameId=" + gameId + "&count=" + count, payload, headers)
     res = conn.getresponse()
     data = res.read()
-    print(data.decode("utf-8"))
+    # print(data.decode("utf-8"))
     return data.decode("utf-8")
 
 def get_board_string(conn, payload, headers, gameId):
     conn.request("GET", "/aip2pgaming/api/index.php?type=boardString&gameId=" + gameId, payload, headers)
     res = conn.getresponse()
     data = res.read()
-    print(data.decode("utf-8"))
+    # print(data.decode("utf-8"))
     return data.decode("utf-8")
 
 def get_board_map(conn, payload, headers, gameId):
     conn.request("GET", "/aip2pgaming/api/index.php?type=boardMap&gameId=" + gameId, payload, headers)
     res = conn.getresponse()
     data = res.read()
-    print(data.decode("utf-8"))
+    # print(data.decode("utf-8"))
     return data.decode("utf-8")
 
 ## POST ##
