@@ -4,20 +4,10 @@ import http.client
 import mimetypes
 from codecs import encode
 import time
+from tictactoe import *
 
-# TEAM INFO
-#Main Team: TeamTacToe
-#{"code":"OK","teamId":1260}
-teamId = "1260"
-
-teamId1 = "1260"
-teamId2 = "1259"
-
-# Test team: AlphaTicTacToe
-# {"code":"OK","teamId":1259}
 
 boundary = 'wL36Yn8afVp8Ag7AmP8qZ0SA4n1v9T'
-
 
 ## GET ##
 def get_myTeams(conn, payload, headers):
@@ -175,7 +165,7 @@ def make_move(conn, payload, headers, teamId, move, gameId):
     dataList.append(encode('Content-Disposition: form-data; name=move;'))
     dataList.append(encode('Content-Type: {}'.format('text/plain')))
     dataList.append(encode(''))
-    dataList.append(encode(move))
+    dataList.append(encode(str(move)))
     dataList.append(encode('--' + boundary))
 
     dataList.append(encode('Content-Disposition: form-data; name=gameId;'))
@@ -187,16 +177,34 @@ def make_move(conn, payload, headers, teamId, move, gameId):
 
     general_post(conn, payload, headers, dataList)
 
+def get_player_opponent(moves):
+    try:
+        player = moves[-40]
+        print(player)
+
+        if(player == "X"):
+            opponent = "O"
+        else:
+            opponent = "X"
+    except:
+        #means that we go first
+        player = "X"
+        opponent = "O"
+
+    return player, opponent
+
 def try_move(conn, payload, headers, teamId, gameId):
-    move="4,4"
+    # move="4,4"
 
     moves = get_moves(conn, payload, headers, gameId, "30")
+
+    player, opponent = get_player_opponent(moves)
+
     board_string = get_board_string(conn, payload, headers, gameId)
     board_map = get_board_map(conn, payload, headers, gameId)
 
     #parsing the board
     board_by_rows = board_string.split("\"")[3].split("\\n")[:-1]
-    print(board_by_rows)
 
     current_board = []
     for row in board_by_rows:
@@ -205,6 +213,8 @@ def try_move(conn, payload, headers, teamId, gameId):
 
     for row in current_board:
         print(row)
+
+    move = findBestMove(current_board, player, opponent)
 
     make_move(conn, payload, headers, teamId, move, gameId)
 
@@ -249,6 +259,16 @@ def try_move(conn, payload, headers, teamId, gameId):
 #          ],"code":"OK"}
 
 def run():
+    # TEAM INFO
+    #Main Team: TeamTacToe
+    #{"code":"OK","teamId":1260}
+    # Test team: AlphaTicTacToe
+    # {"code":"OK","teamId":1259}
+    teamId = "1260"
+
+    teamId1 = "1260"
+    teamId2 = "1259"
+
     #connect to api
     conn = http.client.HTTPSConnection("www.notexponential.com")
     payload = ''
@@ -257,10 +277,16 @@ def run():
         'userId': '1042'
     }
 
-    gameId = "1310"
+    gameId = "2577"
     #RUN CODE#
     while True:
+        # try:
         try_move(conn, payload, headers, teamId, gameId)
-        time.sleep(30)
+        # except Exception as e:
+        #     print(e)
+        #     #reset conn
+        #     conn = http.client.HTTPSConnection("www.notexponential.com")
+
+        time.sleep(2)
 
 run()
