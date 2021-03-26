@@ -13,9 +13,11 @@ headers = {
   'x-api-key': '49d038fb3c2011271e31',
   'userId': '1071'
 }
-gameId = "2551"
+#"2577"
+gameId = input("Enter GameID:")
 teamId = '1259'
-target = 6
+#target
+target = int(input("Target length:"))
 
 
 while True :

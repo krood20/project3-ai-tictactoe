@@ -7,6 +7,10 @@ import time
 # AI functions
 
 
+#for future alpha beta pruning 
+global alpha 
+global beta 
+
 def boardStringTo2DArray(boardString):
 
     rows = boardString.split("\n")
@@ -159,6 +163,7 @@ def evalauteState(board, move, target):
     a1, b1 = checkVertical(board, opMove, target)
     a2, b2 = checkDiagonal(board, opMove, target)
 
+    #returns sum of wins and loses and the max run of symbols for the player
     return (x + x1 + x2) - (a + a1 + a2), max([y, y1, y2])
 
 #gets max score from eval state
