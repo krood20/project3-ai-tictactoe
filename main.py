@@ -7,22 +7,20 @@ import time
 import naveed_ai as AI
 
 
-
-
 conn = http.client.HTTPSConnection("www.notexponential.com")
 payload = ''
 headers = {
   'x-api-key': '49d038fb3c2011271e31',
   'userId': '1071'
 }
-gameId = "2170"
-teamId = '1260'
+gameId = "2551"
+teamId = '1259'
 target = 6
 
 
 while True :
     #getting moves'
-    time.sleep(.5)
+    time.sleep(1)
     moves = API.get_moves(conn, payload, headers, gameId,'1')
     
     res =  moves.find('No moves')
@@ -44,4 +42,7 @@ while True :
         print(row)
     move = AI.getNextBestMove(board, move, target)
     move = str(move[0]) + ',' + str(move[1])
+    print(move)
+    ## re establishing connection
+    conn = http.client.HTTPSConnection("www.notexponential.com")
     API.make_move(conn, payload, headers,teamId, move, gameId)

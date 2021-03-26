@@ -263,4 +263,4 @@ def run():
         try_move(conn, payload, headers, teamId, gameId)
         time.sleep(30)
 
-run()
+#run()

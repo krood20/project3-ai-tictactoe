@@ -159,9 +159,9 @@ def evalauteState(board, move, target):
     a1, b1 = checkVertical(board, opMove, target)
     a2, b2 = checkDiagonal(board, opMove, target)
 
-    return (x + x1 + x2) - (a + a1 + a2), max([b, b1, b2])
+    return (x + x1 + x2) - (a + a1 + a2), max([y, y1, y2])
 
-
+#gets max score from eval state
 def getBestScoringMove(moves):
     moves  = filter(lambda x: x is not None , moves) 
     bestMove = [0, 0, 0, 0, 0]
@@ -173,7 +173,7 @@ def getBestScoringMove(moves):
                 bestMove = move
     return bestMove
 
-
+#gets min score from eval state
 def getWorstScoringMove(moves):
     moves  = filter(lambda x: x is not None , moves) 
     bestMove = [math.inf, math.inf, math.inf, 0, 0]
@@ -187,7 +187,7 @@ def getWorstScoringMove(moves):
 
 
 def getNextBestMove(Board, move, target):
-
+    # pulls moves made
     potentialMoveSqaures = []
     for i in range(len(Board)):
         for j in range(len(Board[i])):
@@ -198,8 +198,9 @@ def getNextBestMove(Board, move, target):
         for square in potentialMoveSqaures:
             i = square[0]
             j = square[1]
-            moves.append(miniMax(i, j, True, 0, 2, Board, move, move, target))
-
+            #runs mini max for already made moves these will be roots
+            moves.append(miniMax(i, j, True, 0, 4, Board, move, move, target))
+        # picks best move
         bestMove = getBestScoringMove(moves)
         return [bestMove[3], bestMove[4]]
     else:
@@ -217,7 +218,8 @@ def getEmptyAdjacentSqaures(i, j, Board):
                         emptySpaces.append([x, y])
     return emptySpaces
 
-
+# creates a copy of the board and plays the move
+# checks if max edpth is reached
 def miniMaxHelper(i, j, isMax, currentDepth, maxDepth, Board, move, originalMove, target):
     board = deepcopy(Board)
     board[i][j] = move
@@ -226,13 +228,15 @@ def miniMaxHelper(i, j, isMax, currentDepth, maxDepth, Board, move, originalMove
     else:
         nextMove = 'X'
     if(currentDepth < maxDepth):
-        return miniMax(i, j, not isMax, currentDepth + 1, maxDepth, board, nextMove , originalMove)
+        return miniMax(i, j, not isMax, currentDepth + 1, maxDepth, board, nextMove , originalMove, target)
     else:
         wins1, maxRun1 = evalauteState(board, originalMove, target)
         return [wins1, maxRun1, currentDepth, i, j]
 
-
+#decide if mini or max based on isMax Value
 def miniMax(i, j, isMax, currentDepth, maxDepth, Board, move, originalMove, target):
+    # get empty spaces around the current postion
+    # use these as available options
     emptySpaces = getEmptyAdjacentSqaures(i, j, Board)
     if len(emptySpaces) != 0:
         if isMax:
