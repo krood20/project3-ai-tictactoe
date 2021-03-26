@@ -17,7 +17,7 @@ headers = {
 }
 gameId = "2170"
 teamId = '1260'
-
+target = 6
 
 
 while True :
@@ -42,6 +42,6 @@ while True :
     board = AI.boardStringTo2DArray(boardString)
     for row in board:
         print(row)
-    move = AI.getNextBestMove(board, move)
+    move = AI.getNextBestMove(board, move, target)
     move = str(move[0]) + ',' + str(move[1])
     API.make_move(conn, payload, headers,teamId, move, gameId)

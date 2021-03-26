@@ -143,7 +143,7 @@ def checkForWins(board, move, target=6):
     return max([x, x1, x2])
 
 
-def evalauteState(board, move, target=6):
+def evalauteState(board, move, target):
 
     # finding wins
     x, y = checkHorizontal(board, move, target)
@@ -186,7 +186,7 @@ def getWorstScoringMove(moves):
     return bestMove
 
 
-def getNextBestMove(Board, move):
+def getNextBestMove(Board, move, target):
 
     potentialMoveSqaures = []
     for i in range(len(Board)):
@@ -198,7 +198,7 @@ def getNextBestMove(Board, move):
         for square in potentialMoveSqaures:
             i = square[0]
             j = square[1]
-            moves.append(miniMax(i, j, True, 0, 2, Board, move, move))
+            moves.append(miniMax(i, j, True, 0, 2, Board, move, move, target))
 
         bestMove = getBestScoringMove(moves)
         return [bestMove[3], bestMove[4]]
@@ -218,7 +218,7 @@ def getEmptyAdjacentSqaures(i, j, Board):
     return emptySpaces
 
 
-def miniMaxHelper(i, j, isMax, currentDepth, maxDepth, Board, move, originalMove):
+def miniMaxHelper(i, j, isMax, currentDepth, maxDepth, Board, move, originalMove, target):
     board = deepcopy(Board)
     board[i][j] = move
     if move == 'X':
@@ -228,28 +228,28 @@ def miniMaxHelper(i, j, isMax, currentDepth, maxDepth, Board, move, originalMove
     if(currentDepth < maxDepth):
         return miniMax(i, j, not isMax, currentDepth + 1, maxDepth, board, nextMove , originalMove)
     else:
-        wins1, maxRun1 = evalauteState(board, originalMove)
+        wins1, maxRun1 = evalauteState(board, originalMove, target)
         return [wins1, maxRun1, currentDepth, i, j]
 
 
-def miniMax(i, j, isMax, currentDepth, maxDepth, Board, move, originalMove):
+def miniMax(i, j, isMax, currentDepth, maxDepth, Board, move, originalMove, target):
     emptySpaces = getEmptyAdjacentSqaures(i, j, Board)
     if len(emptySpaces) != 0:
         if isMax:
             values = []
             for space in emptySpaces:
-                values.append(miniMaxHelper(space[0], space[1], isMax, currentDepth, maxDepth, Board, move, originalMove))
+                values.append(miniMaxHelper(space[0], space[1], isMax, currentDepth, maxDepth, Board, move, originalMove, target))
                 maxValue = getBestScoringMove(values)
             return maxValue
         else:
             values = []
             for space in emptySpaces:
-                values.append(miniMaxHelper(space[0], space[1], isMax, currentDepth, maxDepth, Board, move, originalMove))
+                values.append(miniMaxHelper(space[0], space[1], isMax, currentDepth, maxDepth, Board, move, originalMove, target))
             minValue = getWorstScoringMove(values)
             return minValue
     else:
         if(currentDepth > 0):
-            wins1, maxRun1 = evalauteState(Board, originalMove)
+            wins1, maxRun1 = evalauteState(Board, originalMove, target)
             return [wins1, maxRun1, currentDepth, i, j]
         else:
            return [-math.inf, -math.inf, -math.inf, 0, 0]
