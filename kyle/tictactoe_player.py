@@ -9,6 +9,7 @@ import random
 from time import sleep
 
 from tictactoe import *
+from api_interaction import *
 
 # Creates an empty board 
 def create_board():
@@ -129,28 +130,36 @@ def evaluate(board):
     return winner 
   
 # Main function to start the game 
-def play_game(): 
-    board, winner, counter = create_board(), 0, 1
-    print(board) 
-    sleep(2) 
-      
-    while winner == 0: 
-        for player in ['X', 'O']: 
-            # board = random_place(board, player)
-            if(player == 'X'):
-                opponent = 'O'
-            else:
-                opponent = 'X'
+def play_game():
+    while(1):
+        print("Try getting board...") 
+        board = boardstring
 
-            board = make_move(board, player, opponent)
-            print("Board after " + str(counter) + " move") 
-            print(board) 
-            sleep(2) 
-            counter += 1
-            winner = evaluate(board) 
-            if winner != 0: 
-                break
-    return(winner) 
+
+    #FOR TESTING
+    # board, winner, counter = create_board(), 0, 1
+    # print(board) 
+    # sleep(2) 
+      
+    # while winner == 0: 
+    #     for player in ['X', 'O']: 
+    #         # board = random_place(board, player)
+    #         if(player == 'X'):
+    #             opponent = 'O'
+    #         else:
+    #             opponent = 'X'
+
+    #         board = make_move(board, player, opponent)
+    #         print("Board after " + str(counter) + " move") 
+    #         print(board) 
+    #         sleep(2) 
+    #         counter += 1
+    #         winner = evaluate(board) 
+    #         if winner != 0: 
+    #             break
+    # return(winner) 
   
 # Driver Code 
-print("Winner is: " + str(play_game())) 
+# print("Winner is: " + str(play_game()))
+play_game()
+print("WINNER IS US")
