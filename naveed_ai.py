@@ -196,7 +196,7 @@ def getNextBestMove(Board, move, target):
     potentialMoveSqaures = []
     for i in range(len(Board)):
         for j in range(len(Board[i])):
-            if(Board[i][j] == '-'):
+            if(Board[i][j] != '-'):
                 potentialMoveSqaures.append([i, j])
     if len(potentialMoveSqaures) > 0:
         moves = []
