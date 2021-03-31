@@ -133,7 +133,7 @@ def evaluate(board):
 def play_game():
     while(1):
         print("Try getting board...") 
-        board = boardstring
+        board = get_board_string()
 
 
     #FOR TESTING
@@ -161,5 +161,5 @@ def play_game():
   
 # Driver Code 
 # print("Winner is: " + str(play_game()))
-play_game()
-print("WINNER IS US")
+# play_game()
+# print("WINNER IS US")

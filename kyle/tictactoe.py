@@ -4,6 +4,7 @@
 # This function returns true if there are moves 
 # remaining on the board. It returns false if 
 # there are no moves left to play. 
+import random
 def isMovesLeft(board) : 
  
     for i in range(3) :
@@ -17,7 +18,7 @@ def isMovesLeft(board) :
 def evaluate(b, player, opponent) : 
    
     # Checking for Rows for X or O victory. 
-    for row in range(3) :     
+    for row in range(len(b)) :     
         if (b[row][0] == b[row][1] and b[row][1] == b[row][2]) :        
             if (b[row][0] == player) :
                 return 10
@@ -25,7 +26,7 @@ def evaluate(b, player, opponent) :
                 return -10
  
     # Checking for Columns for X or O victory. 
-    for col in range(3) :
+    for col in range(len(b)) :
       
         if (b[0][col] == b[1][col] and b[1][col] == b[2][col]) :
          
@@ -49,8 +50,9 @@ def evaluate(b, player, opponent) :
         elif (b[0][2] == opponent) :
             return -10
  
-    # Else if none of them have won then return 0 
-    return 0
+    # Else if none of them have won then return
+    #rand = random.randint(-1, 1) * 10
+    return 0#rand
  
 # This is the minimax function. It considers all 
 # the possible ways the game can go and returns 
@@ -78,8 +80,8 @@ def minimax(board, depth, isMax, player, opponent) :
         best = -1000
  
         # Traverse all cells 
-        for i in range(3) :         
-            for j in range(3) :
+        for i in range(len(board)) :         
+            for j in range(len(board)) :
               
                 # Check if cell is empty 
                 if (board[i][j]=='_') :
@@ -102,8 +104,8 @@ def minimax(board, depth, isMax, player, opponent) :
         best = 1000
  
         # Traverse all cells 
-        for i in range(3) :         
-            for j in range(3) :
+        for i in range(len(board)) :         
+            for j in range(len(board)) :
               
                 # Check if cell is empty 
                 if (board[i][j] == '_') :
@@ -127,8 +129,8 @@ def findBestMove(board, player, opponent) :
     # Traverse all cells, evaluate minimax function for 
     # all empty cells. And return the cell with optimal 
     # value. 
-    for i in range(3) :     
-        for j in range(3) :
+    for i in range(len(board)) :     
+        for j in range(len(board)) :
          
             # Check if cell is empty 
             if (board[i][j] == '_') : 
@@ -154,6 +156,12 @@ def findBestMove(board, player, opponent) :
     print()
     return bestMove
 
+# Select a random place for the player 
+# def make_move(board, player, opponent): 
+#     move = findBestMove(board, player, opponent)
+#     print(move)
+#     board[move] = player 
+#     return(board) 
 # # Driver code
 # board = [
 #     [ 'X', 'O', 'X' ], 
