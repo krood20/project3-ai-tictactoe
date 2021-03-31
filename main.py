@@ -36,7 +36,6 @@ while True :
         move = 'X'
     ## put call to ai logic
     boardString =  API.get_board_string(conn, payload, headers, gameId)
-
     boardString =  json.loads(boardString)
     boardString = boardString["output"]
     board = AI.boardStringTo2DArray(boardString)

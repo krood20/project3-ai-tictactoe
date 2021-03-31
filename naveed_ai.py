@@ -196,7 +196,7 @@ def getNextBestMove(Board, move, target):
     potentialMoveSqaures = []
     for i in range(len(Board)):
         for j in range(len(Board[i])):
-            if(Board[i][j] != '-'):
+            if(Board[i][j] == '-'):
                 potentialMoveSqaures.append([i, j])
     if len(potentialMoveSqaures) > 0:
         moves = []
@@ -248,7 +248,7 @@ def miniMax(i, j, isMax, currentDepth, maxDepth, Board, move, originalMove, targ
             values = []
             for space in emptySpaces:
                 values.append(miniMaxHelper(space[0], space[1], isMax, currentDepth, maxDepth, Board, move, originalMove, target))
-                maxValue = getBestScoringMove(values)
+            maxValue = getBestScoringMove(values)
             return maxValue
         else:
             values = []
