@@ -71,36 +71,59 @@ def tryMask(board, player):
     #get the moves immediately arround the vicinity of placed elements
     if not all(board[row][col] == '-' for row in range(len(board)) for col in range(len(board))):
         if player =='X':
+            #print(xMask)
+            #print(oMask)
             availableMoves = np.logical_and(np.logical_not(oMask.mask), dMask.mask)
-            pRow, pCol = np.where(xMask.mask==True)
-            pLocs = np.column_stack((pRow, pCol))
             
             aRow, aCol = np.where(availableMoves==True)
             aLocs = np.column_stack((aRow, aCol))
             
-            for pLoc in pLocs:
-                for aLoc in aLocs:
-                    dist = m.sqrt((abs(pLoc[0] - aLoc[0]))**2 + (abs(pLoc[1] - aLoc[1]))**2)
-                    if dist == 1 or dist == m.sqrt(2):
-                        potMoves.append(aLoc.tolist())
-             
-            #r.shuffle(potMoves)
+            if type(xMask.mask) != np.bool_:
+                pRow, pCol = np.where(xMask.mask==True)
+                pLocs = np.column_stack((pRow, pCol))
+                
+                for pLoc in pLocs:
+                    for aLoc in aLocs:
+                        dist = m.sqrt((abs(pLoc[0] - aLoc[0]))**2 + (abs(pLoc[1] - aLoc[1]))**2)
+                        if dist == 1 or dist == m.sqrt(2):
+                            potMoves.append(aLoc.tolist())
+                    
+            else:
+                potMoves = aLocs.tolist()
+                #print('potMoves: ')
+                #print(potMoves)
+                
+            potMoves = np.unique(potMoves, axis = 0)
+            r.shuffle(potMoves)
             return potMoves
                     
         elif player =='O':
             availableMoves = np.logical_and(np.logical_not(xMask.mask), dMask.mask)
-            pRow, pCol = np.where(xMask.mask==True)
-            pLocs = np.column_stack((pRow, pCol))
-            
             aRow, aCol = np.where(availableMoves==True)
             aLocs = np.column_stack((aRow, aCol))
             
-            for pLoc in pLocs:
-                for aLoc in aLocs:
-                    dist = m.sqrt((abs(pLoc[0] - aLoc[0]))**2 + (abs(pLoc[1] - aLoc[1]))**2)
-                    if dist == 1 or dist == m.sqrt(2):
-                        potMoves.append(aLoc.tolist())
+            if type(oMask.mask) != np.bool_:
+                #print(oMask.mask)
+                #print(xMask)
+                pRow, pCol = np.where(oMask.mask==True)
+                pLocs = np.column_stack((pRow, pCol))
+            
+            
+            
+                for pLoc in pLocs:
+                    for aLoc in aLocs:
+                        dist = m.sqrt((abs(pLoc[0] - aLoc[0]))**2 + (abs(pLoc[1] - aLoc[1]))**2)
+                        if dist == 1 or dist == m.sqrt(2):
+                            potMoves.append(aLoc.tolist())
                         
+            else:
+                potMoves = aLocs.tolist()
+                #print('potMoves: ')
+                #print(potMoves)
+                
+            
+            potMoves = np.unique(potMoves, axis = 0)
+            r.shuffle(potMoves)
             return potMoves
     
     return potMoves  
@@ -146,31 +169,51 @@ def getMove(board, player, boardSize, winThreshold):
         oMoves = tryMask(board, 'O')
         (offensiveMoves, maxRunX) = selectMove(board, 'X', boardSize, winThreshold)
         (defensiveMoves, maxRunO) = selectMove(board, 'O', boardSize, winThreshold)
+        
+        #print('X')
+        #print('xMoves: ')
+        #print(xMoves)
+        #print('oMoves: ')
+        #print(oMoves)
+        #print(offensiveMoves)
+        #print(defensiveMoves)
         #if offensiveMoves and defensiveMoves:
         if offensiveMoves and defensiveMoves:
             if len(maxRunX) >= len(maxRunO):
-                for move in offensiveMoves:
-                    for xlocs in xMoves:
-                        if move[0] == xlocs[0] and move[1] == xlocs[1]:
-                            return move
+                r.shuffle(offensiveMoves)
+                move = offensiveMoves[0]
+                return move
+                #for move in offensiveMoves:
+                #    for xlocs in xMoves:
+                #        if move[0] == xlocs[0] and move[1] == xlocs[1]:
+                #            return move
         
             elif len(maxRunX) < len(maxRunO):
-                for move in defensiveMoves:
-                    for olocs in oMoves:
-                        if move[0] == olocs[0] and move[1] == olocs[1]:
-                            return move
+                r.shuffle(defensiveMoves)
+                move = defensiveMoves[0]
+                return move
+                #for move in defensiveMoves:
+                #    for olocs in oMoves:
+                #        if move[0] == olocs[0] and move[1] == olocs[1]:
+                #            return move
         
         elif offensiveMoves:
-            for move in offensiveMoves:
-                for xlocs in xMoves:
-                    if move[0] == xlocs[0] and move[1] == xlocs[1]:
-                        return move
+            r.shuffle(offensiveMoves)
+            move = offensiveMoves[0]
+            return move
+            #for move in offensiveMoves:
+            #    for xlocs in xMoves:
+            #        if move[0] == xlocs[0] and move[1] == xlocs[1]:
+            #            return move
         
         elif defensiveMoves:
-            for move in defensiveMoves:
-                for olocs in oMoves:
-                    if move[0] == olocs[0] and move[1] == olocs[1]:
-                        return move
+            r.shuffle(defensiveMoves)
+            move = defensiveMoves[0]
+            return move
+            #for move in defensiveMoves:
+            #    for olocs in oMoves:
+            #        if move[0] == olocs[0] and move[1] == olocs[1]:
+            #            return move
         
         r.shuffle(xMoves)
         return xMoves[0]
@@ -182,30 +225,49 @@ def getMove(board, player, boardSize, winThreshold):
         (offensiveMoves, maxRunO) = selectMove(board, 'O', boardSize, winThreshold)
         (defensiveMoves, maxRunX) = selectMove(board, 'X', boardSize, winThreshold)
         
+        #print('O')
+        #print('oMoves: ')
+        #print(oMoves)
+        #print('xMoves: ')  
+        #print(xMoves)
+        #print(offensiveMoves)
+        #print(defensiveMoves)
         #if offensiveMoves and defensiveMoves:
         if offensiveMoves and defensiveMoves:
             if len(maxRunO) >= len(maxRunX):
-                for move in offensiveMoves:
-                    for olocs in oMoves:
-                        if move[0] == olocs[0] and move[1] == olocs[1]:
-                            return move
+                r.shuffle(offensiveMoves)
+                move = offensiveMoves[0]
+                return move
+                #for move in offensiveMoves:
+                #    for olocs in oMoves:
+                #        if move[0] == olocs[0] and move[1] == olocs[1]:
+                #            return move
         
             elif len(maxRunO) < len(maxRunX):
-                for move in defensiveMoves:
-                    for xlocs in xMoves:
-                        if move[0] == xlocs[0] and move[1] == xlocs[1]:
-                            return move
+                r.shuffle(defensiveMoves)
+                move = defensiveMoves[0]
+                return move
+                #for move in defensiveMoves:
+                #    for xlocs in xMoves:
+                 #       if move[0] == xlocs[0] and move[1] == xlocs[1]:
+                 #           return move
         
         elif offensiveMoves:
-            for move in offensiveMoves:
-                for olocs in oMoves:
-                    if move[0] == olocs[0] and move[1] == olocs[1]:
-                        return move
+            r.shuffle(offensiveMoves)
+            move = offensiveMoves[0]
+            return move
+            #for move in offensiveMoves:
+            #    for olocs in oMoves:
+            #        if move[0] == olocs[0] and move[1] == olocs[1]:
+            #            return move
         elif defensiveMoves:
-            for move in defensiveMoves:
-                for xlocs in xMoves:
-                    if move[0] == xlocs[0] and move[1] == xlocs[1]:
-                        return move
+            r.shuffle(defensiveMoves)
+            move = defensiveMoves[0]
+            return move
+            #for move in defensiveMoves:
+            #    for xlocs in xMoves:
+            #        if move[0] == xlocs[0] and move[1] == xlocs[1]:
+            #            return move
         
         r.shuffle(oMoves)
         return oMoves[0]
@@ -243,7 +305,7 @@ def selectMove(board, oppPlayer, boardSize, winThreshold):
                 
                 if considerMax:   
             
-                    print(maxRun)
+                    #print(maxRun)
                     maxRun = listOfRuns[i][1]
                     orientation = 0
                     startCol = col
@@ -339,21 +401,9 @@ def selectMove(board, oppPlayer, boardSize, winThreshold):
                     if considerMax:   
                         maxRun = listOfRuns[i][1]
                         orientation = 2
-                        
-                        print('list:')
-                        print(listOfRuns[i][1])
-                        print('diags1:')
-                        print(diagsIdx[j][0])
-                        print('diags2:')
-                        print(diagsIdx[j][1])
-                        
                         findCounter = 0
-                        #print(diagsIdx[i])
-                        #print(len(diagsIdx[i]))
                         startRow = diagsIdx[j][0][0]
                         startCol = diagsIdx[j][1][0]
-                        print(startRow)
-                        print(startCol)
                         endRow = findCounter
                         endCol = findCounter
                         runNotFound = True
@@ -384,7 +434,7 @@ def selectMove(board, oppPlayer, boardSize, winThreshold):
     #print('orientation = ', orientation, 'maxRun = ', maxRun)
     #print('startCol = ', startCol, 'endCol = ', endCol, 'startRow = ', startRow, 'endRow = ', endRow)
     if orientation == 0:
-        if endRow < len(board)-1 and board[endRow+1][endCol] == '-': 
+        if endRow < len(board)-1 and board[endRow+1][endCol] == '-':
                 potMoves.append([endRow+1, endCol])
         
         if startRow > 0 and board[startRow-1][endCol] == '-':
@@ -416,10 +466,9 @@ def selectMove(board, oppPlayer, boardSize, winThreshold):
             if startCol > 0 and startRow < len(board) - 1: 
                 if board[startRow+1][startCol-1] == '-':
                     potMoves.append([startRow+1, startCol-1])
-            
+         
+        #print(potMoves)
     return (potMoves, maxRun)
-    
-    #print(maxRun, startCol, endCol, startRow, endRow)
 
 def terminalTest(board, minPlayer, maxPlayer, boardSize, winThreshold):
     
@@ -507,7 +556,11 @@ def getNextBestMove(board, player, target):
     else:
         minPlayer = 'X'
     
+    #print(maxPlayer)
+    #print(target)
+    
     boardSize = len(board)
+    #drawBoard(board)
     winThreshold = target
     
     alpha = -float("inf")
@@ -516,15 +569,26 @@ def getNextBestMove(board, player, target):
     currentDepth = 0
     maxDepth = 4 
     
-    (_, xPos, yPos) = maxValue(board, minPlayer, maxPlayer, alpha, beta, currentDepth, maxDepth, boardSize, winThreshold)
-    if xPos is not None and yPos is not None:
-        #print('Made it here X')
-        move = [xPos, yPos]
-    else:
-        move = getMove(board, maxPlayer, boardSize, winThreshold)
-        #print(move)
+    if all(board[row][col] == '-' for row in range(boardSize) for col in range(boardSize)):
+        #print('madeItHere')
+        
+        bestFirstMoves = pickFirstMove(board, boardSize, minPlayer)
+        if bestFirstMoves:
+            r.shuffle(bestFirstMoves)
+            move = bestFirstMoves[0]
+            return move
+            #board[firstMove[0]][firstMove[1]] = maxPlayer
     
-    return move
+    else:
+        #print('Made it here 2')
+        (_, xPos, yPos) = maxValue(board, minPlayer, maxPlayer, alpha, beta, currentDepth, maxDepth, boardSize, winThreshold)
+        if xPos is not None and yPos is not None:
+            #print('Made it here X')
+            move = [xPos, yPos]
+            return move
+        else:
+            move = getMove(board, maxPlayer, boardSize, winThreshold)
+            return move
 
 
       
@@ -547,8 +611,6 @@ def alphaBetaSearch(boardSize, winThreshold):
         drawBoard(board)
         #print(turnCounter)
         result = checkForWin(board, boardSize, winThreshold)
-        
-        
         if result != None:
             if result == 'X':
                 print('X wins')
@@ -580,18 +642,26 @@ def alphaBetaSearch(boardSize, winThreshold):
             turnCounter = turnCounter + 1
             
         else:
-            (_, xPos, yPos) = minValue(board, minPlayer, maxPlayer, alpha, beta, currentDepth, maxDepth, boardSize, winThreshold)
-            
-            if xPos is not None and yPos is not None:
-                #print('Made it here O')
-                board[xPos][yPos] = minPlayer
+            if turnCounter == 1:
+                
+               bestFirstMoves = pickFirstMove(board, boardSize, maxPlayer)
+               if bestFirstMoves:
+                   r.shuffle(bestFirstMoves)
+                   firstMove = bestFirstMoves[0]
+                   board[firstMove[0]][firstMove[1]] = minPlayer
             else:
-                move = getMove(board, minPlayer, boardSize, winThreshold)
-                board[move[0]][move[1]] = minPlayer
+                (_, xPos, yPos) = minValue(board, maxPlayer, minPlayer, alpha, beta, currentDepth, maxDepth, boardSize, winThreshold)
+                
+                if xPos is not None and yPos is not None:
+                    #print('Made it here O')
+                    board[xPos][yPos] = minPlayer
+                else:
+                    move = getMove(board, minPlayer, boardSize, winThreshold)
+                    board[move[0]][move[1]] = minPlayer
             player = maxPlayer
             turnCounter = turnCounter + 1
                
 if __name__ == "__main__":
 
     #alphaBetaSearch(8, 5)
-    alphaBetaSearch(12, 6)
+    alphaBetaSearch(9, 5)

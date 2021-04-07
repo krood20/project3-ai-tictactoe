@@ -16,21 +16,21 @@ headers = {
 }
 #"2577"
 gameId = input("Enter GameID:")
-teamId = '1259'
+teamId = '1260'
 #target
 target = int(input("Target length:"))
-
 
 while True :
     #getting moves'
     time.sleep(1)
     moves = API.get_moves(conn, payload, headers, gameId,'1')
-    
+    print(moves)
     res =  moves.find('No moves')
     symbol= 'X'
     if(res == -1):
         moves=json.loads(moves)
         symbol = moves['moves'][0]['symbol']
+        
     if symbol == 'X':
         move = 'O'
     else:
@@ -40,8 +40,19 @@ while True :
     boardString =  json.loads(boardString)
     boardString = boardString["output"]
     board = AI.boardStringTo2DArray(boardString)
-    for row in board:
-        print(row)
+    #for row in board:
+    #    print(row)
+        
+    result = ABP.checkForWin(board, len(board), target)
+    if result != None:
+        if result == 'X':
+            print('X wins')
+        elif result == 'O':
+            print('O wins')
+        elif result == '-':
+            print('Tie')
+    
+    ABP.drawBoard(board)
     move = ABP.getNextBestMove(board, move, target)
     move = str(move[0]) + ',' + str(move[1])
     print(move)
