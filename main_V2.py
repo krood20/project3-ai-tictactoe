@@ -11,8 +11,8 @@ import alphaBetaPruning_V6 as ABP
 conn = http.client.HTTPSConnection("www.notexponential.com")
 payload = ''
 headers = {
-  'x-api-key': '49d038fb3c2011271e31',
-  'userId': '1071'
+  'x-api-key': 'd076bd1b3e38ff14b1ec',
+  'userId': '1033'
 }
 #"2577"
 gameId = input("Enter GameID:")

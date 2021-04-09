@@ -26,8 +26,8 @@ def checkForWin(board, boardSize, winThreshold):
         
     #Vertical win
     for col in range(0,boardSize):
-        test_list = [row[col] for row in board]
-        listOfRuns = [(symbol, list(run)) for symbol, run in groupby(test_list)]
+        colList = [row[col] for row in board]
+        listOfRuns = [(symbol, list(run)) for symbol, run in groupby(colList)]
         longestRun = max(listOfRuns, key=lambda x:len(x[-1]))
         if len(longestRun[1]) == winThreshold and longestRun[0] != '-':
             return longestRun[0]
@@ -71,8 +71,6 @@ def tryMask(board, player):
     #get the moves immediately arround the vicinity of placed elements
     if not all(board[row][col] == '-' for row in range(len(board)) for col in range(len(board))):
         if player =='X':
-            #print(xMask)
-            #print(oMask)
             availableMoves = np.logical_and(np.logical_not(oMask.mask), dMask.mask)
             
             aRow, aCol = np.where(availableMoves==True)
@@ -90,8 +88,6 @@ def tryMask(board, player):
                     
             else:
                 potMoves = aLocs.tolist()
-                #print('potMoves: ')
-                #print(potMoves)
                 
             potMoves = np.unique(potMoves, axis = 0)
             r.shuffle(potMoves)
@@ -103,12 +99,8 @@ def tryMask(board, player):
             aLocs = np.column_stack((aRow, aCol))
             
             if type(oMask.mask) != np.bool_:
-                #print(oMask.mask)
-                #print(xMask)
                 pRow, pCol = np.where(oMask.mask==True)
                 pLocs = np.column_stack((pRow, pCol))
-            
-            
             
                 for pLoc in pLocs:
                     for aLoc in aLocs:
@@ -118,9 +110,6 @@ def tryMask(board, player):
                         
             else:
                 potMoves = aLocs.tolist()
-                #print('potMoves: ')
-                #print(potMoves)
-                
             
             potMoves = np.unique(potMoves, axis = 0)
             r.shuffle(potMoves)
@@ -170,14 +159,6 @@ def getMove(board, player, boardSize, winThreshold):
         (offensiveMoves, maxRunX) = selectMove(board, 'X', boardSize, winThreshold)
         (defensiveMoves, maxRunO) = selectMove(board, 'O', boardSize, winThreshold)
         
-        #print('X')
-        #print('xMoves: ')
-        #print(xMoves)
-        #print('oMoves: ')
-        #print(oMoves)
-        #print(offensiveMoves)
-        #print(defensiveMoves)
-        #if offensiveMoves and defensiveMoves:
         if offensiveMoves and defensiveMoves:
             if len(maxRunX) >= len(maxRunO):
                 r.shuffle(offensiveMoves)
@@ -225,14 +206,6 @@ def getMove(board, player, boardSize, winThreshold):
         (offensiveMoves, maxRunO) = selectMove(board, 'O', boardSize, winThreshold)
         (defensiveMoves, maxRunX) = selectMove(board, 'X', boardSize, winThreshold)
         
-        #print('O')
-        #print('oMoves: ')
-        #print(oMoves)
-        #print('xMoves: ')  
-        #print(xMoves)
-        #print(offensiveMoves)
-        #print(defensiveMoves)
-        #if offensiveMoves and defensiveMoves:
         if offensiveMoves and defensiveMoves:
             if len(maxRunO) >= len(maxRunX):
                 r.shuffle(offensiveMoves)
@@ -556,16 +529,12 @@ def getNextBestMove(board, player, target):
     else:
         minPlayer = 'X'
     
-    #print(maxPlayer)
-    #print(target)
-    
     boardSize = len(board)
     #drawBoard(board)
     winThreshold = target
     
     alpha = -float("inf")
     beta = float("inf")
-    #Currently not working
     currentDepth = 0
     maxDepth = 4 
     
@@ -577,7 +546,6 @@ def getNextBestMove(board, player, target):
             r.shuffle(bestFirstMoves)
             move = bestFirstMoves[0]
             return move
-            #board[firstMove[0]][firstMove[1]] = maxPlayer
     
     else:
         #print('Made it here 2')
@@ -589,8 +557,6 @@ def getNextBestMove(board, player, target):
         else:
             move = getMove(board, maxPlayer, boardSize, winThreshold)
             return move
-
-
       
 def alphaBetaSearch(boardSize, winThreshold):
     
@@ -600,7 +566,6 @@ def alphaBetaSearch(boardSize, winThreshold):
     minPlayer = 'O'
     alpha = -float("inf")
     beta = float("inf")
-    #Currently not working
     currentDepth = 0
     maxDepth = 4 
     
@@ -609,7 +574,6 @@ def alphaBetaSearch(boardSize, winThreshold):
     while True:
         
         drawBoard(board)
-        #print(turnCounter)
         result = checkForWin(board, boardSize, winThreshold)
         if result != None:
             if result == 'X':
