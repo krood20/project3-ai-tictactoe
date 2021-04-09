@@ -32,9 +32,9 @@ while True :
         symbol = moves['moves'][0]['symbol']
         
     if symbol == 'X':
-        move = 'O'
+        player = 'O'
     else:
-        move = 'X'
+        player = 'X'
     ## put call to ai logic
     boardString =  API.get_board_string(conn, payload, headers, gameId)
     boardString =  json.loads(boardString)
@@ -53,7 +53,7 @@ while True :
             print('Tie')
     
     ABP.drawBoard(board)
-    move = ABP.getNextBestMove(board, move, target)
+    move = ABP.getNextBestMove(board, player, target)
     move = str(move[0]) + ',' + str(move[1])
     print(move)
     ## re establishing connection
